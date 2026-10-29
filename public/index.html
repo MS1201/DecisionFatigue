@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Decision Fatigue Management App - Simplify your life and amplify your focus">
+    <title>Decision Fatigue Management App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <style>
+        .landing-container {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #0f0c29 0%, #1a1640 40%, #24243e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .landing-orb {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .landing-orb-1 {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent 70%);
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .landing-orb-2 {
+            width: 350px;
+            height: 350px;
+            bottom: -100px;
+            left: -80px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.2), transparent 70%);
+            animation: float-reverse 10s ease-in-out infinite;
+        }
+
+        .landing-orb-3 {
+            width: 200px;
+            height: 200px;
+            top: 40%;
+            left: 60%;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.15), transparent 70%);
+            animation: pulse-ring 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(3deg);
+            }
+        }
+
+        @keyframes float-reverse {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(20px);
+            }
+        }
+
+        @keyframes pulse-ring {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.3;
+            }
+        }
+
+        .landing-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .landing-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 9999px;
+            color: #a5b4fc;
+            font-size: 0.8rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .landing-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse-ring 2s ease-in-out infinite;
+        }
+
+        .landing-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .landing-title span {
+            background: linear-gradient(135deg, #818cf8, #c084fc, #fb923c);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        .landing-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.5);
+            max-width: 580px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .landing-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .landing-cta .btn-primary {
+            padding: 0.9rem 2.5rem;
+            font-size: 1.05rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            border-radius: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .landing-cta .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .landing-cta .btn-outline {
+            padding: 0.9rem 2.5rem;
+            font-size: 1.05rem;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .landing-cta .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+        }
+
+
+        .landing-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        .landing-feature-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 1.75rem 1.25rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease-out both;
+        }
+
+        .landing-feature-card:nth-child(1) {
+            animation-delay: 0.35s;
+        }
+
+        .landing-feature-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .landing-feature-card:nth-child(3) {
+            animation-delay: 0.45s;
+        }
+
+        .landing-feature-card:nth-child(4) {
+            animation-delay: 0.5s;
+        }
+
+        .landing-feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-6px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-emoji {
+            font-size: 2.25rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .landing-feature-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .landing-feature-card p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            font-family: 'Inter', sans-serif;
+        }
+
+
+        .landing-tagline {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            animation: fadeInUp 0.5s ease-out 0.6s both;
+        }
+
+        .landing-tagline span {
+            margin: 0 0.5rem;
+        }
+
+
+        @media (max-width: 768px) {
+            .landing-title {
+                font-size: 2.25rem;
+                letter-spacing: -1px;
+            }
+
+            .landing-subtitle {
+                font-size: 1rem;
+            }
+
+            .landing-content {
+                padding: 3rem 1.25rem;
+            }
+
+            .landing-features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .landing-title {
+                font-size: 1.85rem;
+            }
+
+            .landing-features {
+                grid-template-columns: 1fr;
+            }
+
+            .landing-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="landing-container">
+        <div class="landing-orb landing-orb-1"></div>
+        <div class="landing-orb landing-orb-2"></div>
+        <div class="landing-orb landing-orb-3"></div>
+
+        <div class="landing-content">
+
+            <div class="landing-badge">
+                <span class="dot"></span>
+                AI-Powered Productivity
+            </div>
+
+
+            <h1 class="landing-title">
+                Stop Overthinking.<br>
+                Start <span>Living</span>.
+            </h1>
+
+
+            <p class="landing-subtitle">
+                Decision Fatigue automates your daily micro-decisions — from meals and outfits
+                to schedules and tasks — so you can focus on what truly matters.
+            </p>
+
+
+            <div class="landing-cta">
+                <a href="/signup.html" class="btn btn-primary btn-lg">
+                    Get Started Free →
+                </a>
+                <a href="/login.html" class="btn btn-outline btn-lg">
+                    Sign In
+                </a>
+            </div>
+
+
+            <div class="landing-features">
+                <div class="landing-feature-card">
+                    <span class="feature-emoji">📅</span>
+                    <h3>Smart Scheduling</h3>
+                    <p>AI-generated daily schedules optimized for your energy levels</p>
+                </div>
+
+                <div class="landing-feature-card">
+                    <span class="feature-emoji">🍽️</span>
+                    <h3>Meal Planning</h3>
+                    <p>Personalized meal suggestions based on your diet preferences</p>
+                </div>
+
+                <div class="landing-feature-card">
+                    <span class="feature-emoji">👔</span>
+                    <h3>Outfit Generator</h3>
+                    <p>Daily outfit picks from your digital wardrobe</p>
+                </div>
+
+                <div class="landing-feature-card">
+                    <span class="feature-emoji">✅</span>
+                    <h3>Task Priority</h3>
+                    <p>Intelligent sorting with Eisenhower Matrix</p>
+                </div>
+            </div>
+
+
+            <div class="landing-tagline">
+                <span>🤖 Autopilot Mode</span> •
+                <span>📊 Analytics Dashboard</span> •
+                <span>😊 Mood Tracking</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        if (localStorage.getItem('token')) {
+            window.location.href = '/dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

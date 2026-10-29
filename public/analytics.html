@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Decision Fatigue App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .chart-container {
+            height: 300px;
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            gap: var(--spacing-sm);
+        }
+
+        .bar {
+            flex: 1;
+            background: var(--color-primary);
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease;
+            position: relative;
+            min-height: 4px;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+        }
+
+        .stat-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 8px solid var(--color-surface-elevated);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .stat-circle-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-circle-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>🧠 Decision Fatigue</h2>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/dashboard.html" class="nav-link"><span
+                                class="nav-icon">📊</span><span>Dashboard</span></a></li>
+                    <li class="nav-item"><a href="/schedule.html" class="nav-link"><span
+                                class="nav-icon">📅</span><span>Schedule</span></a></li>
+                    <li class="nav-item"><a href="/meals.html" class="nav-link"><span
+                                class="nav-icon">🍽️</span><span>Meals</span></a></li>
+                    <li class="nav-item"><a href="/outfits.html" class="nav-link"><span
+                                class="nav-icon">👔</span><span>Outfits</span></a></li>
+                    <li class="nav-item"><a href="/tasks.html" class="nav-link"><span
+                                class="nav-icon">✅</span><span>Tasks</span></a></li>
+                    <li class="nav-item"><a href="/autopilot.html" class="nav-link"><span
+                                class="nav-icon">🤖</span><span>Autopilot</span></a></li>
+                    <li class="nav-item"><a href="/mood.html" class="nav-link"><span
+                                class="nav-icon">😊</span><span>Mood Tracker</span></a></li>
+                    <li class="nav-item"><a href="/analytics.html" class="nav-link active"><span
+                                class="nav-icon">📈</span><span>Analytics</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <header class="dashboard-header">
+            <div class="header-title">
+                <h1>Insights & Analytics</h1>
+                <p class="header-subtitle">Track your progress and decision savings</p>
+            </div>
+            <div class="user-menu" onclick="logout()">
+                <div class="user-avatar" id="userAvatar">U</div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="stats-grid mb-2">
+                <div class="stat-card">
+                    <div class="stat-value" id="decisionsSaved">0</div>
+                    <div class="stat-label">Decisions Saved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="hoursSaved">0</div>
+                    <div class="stat-label">Hours Reclaimed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="streakDays">0</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgProductivity">0%</div>
+                    <div class="stat-label">Avg Productivity</div>
+                </div>
+            </div>
+
+            <div class="grid grid-2" style="gap: var(--spacing-xl);">
+                <div class="glass-card">
+                    <h3 class="card-title">Decision Load Reduction</h3>
+                    <p class="mb-2" style="color: var(--color-text-secondary); font-size: 0.9rem;">Decisions automated
+                        per day (Last 7 days)</p>
+                    <div class="chart-container" id="decisionChart">
+                        <div class="spinner" style="margin: auto;"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3 class="card-title">Habit Consistency</h3>
+                    <div
+                        style="display: flex; flex-wrap: wrap; gap: var(--spacing-xl); justify-content: center; padding: var(--spacing-lg);">
+                        <div class="text-center">
+                            <div class="stat-circle" style="border-color: var(--color-success);">
+                                <span class="stat-circle-value" id="scheduleAdherence">0%</span>
+                                <span class="stat-circle-label">Schedule</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="stat-circle" style="border-color: var(--color-primary);">
+                                <span class="stat-circle-value" id="mealAdherence">0%</span>
+                                <span class="stat-circle-label">Meals</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="stat-circle" style="border-color: var(--color-accent);">
+                                <span class="stat-circle-value" id="taskCompletion">0%</span>
+                                <span class="stat-circle-label">Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/analytics.js"></script>
+</body>
+
+</html>

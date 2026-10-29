@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker - Decision Fatigue App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .mood-selector {
+            display: flex;
+            justify-content: space-between;
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-sm);
+            background: var(--color-surface-elevated);
+            border-radius: var(--radius-full);
+        }
+
+        .mood-option {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform var(--transition-fast);
+            filter: grayscale(1);
+            opacity: 0.7;
+        }
+
+        .mood-option:hover,
+        .mood-option.active {
+            transform: scale(1.3);
+            filter: grayscale(0);
+            opacity: 1;
+        }
+
+        .energy-slider-container {
+            margin: var(--spacing-xl) 0;
+            text-align: center;
+        }
+
+        .energy-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .history-list {
+            margin-top: var(--spacing-lg);
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            transition: background var(--transition-fast);
+        }
+
+        .history-item:hover {
+            background: var(--color-surface-elevated);
+        }
+
+        .history-emoji {
+            font-size: 1.5rem;
+            margin-right: var(--spacing-md);
+        }
+
+        .history-details {
+            flex: 1;
+        }
+
+        .history-date {
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>🧠 Decision Fatigue</h2>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/dashboard.html" class="nav-link"><span
+                                class="nav-icon">📊</span><span>Dashboard</span></a></li>
+                    <li class="nav-item"><a href="/schedule.html" class="nav-link"><span
+                                class="nav-icon">📅</span><span>Schedule</span></a></li>
+                    <li class="nav-item"><a href="/meals.html" class="nav-link"><span
+                                class="nav-icon">🍽️</span><span>Meals</span></a></li>
+                    <li class="nav-item"><a href="/outfits.html" class="nav-link"><span
+                                class="nav-icon">👔</span><span>Outfits</span></a></li>
+                    <li class="nav-item"><a href="/tasks.html" class="nav-link"><span
+                                class="nav-icon">✅</span><span>Tasks</span></a></li>
+                    <li class="nav-item"><a href="/autopilot.html" class="nav-link"><span
+                                class="nav-icon">🤖</span><span>Autopilot</span></a></li>
+                    <li class="nav-item"><a href="/mood.html" class="nav-link active"><span
+                                class="nav-icon">😊</span><span>Mood Tracker</span></a></li>
+                    <li class="nav-item"><a href="/analytics.html" class="nav-link"><span
+                                class="nav-icon">📈</span><span>Analytics</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-title">
+                <h1>Mood & Energy Tracking</h1>
+                <p class="header-subtitle">Monitor your wellbeing to optimize decisions</p>
+            </div>
+            <div class="user-menu" onclick="logout()">
+                <div class="user-avatar" id="userAvatar">U</div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="grid grid-2" style="grid-template-columns: 1.5fr 1fr; gap: var(--spacing-xl);">
+                <!-- Log Entry -->
+                <div>
+                    <div class="glass-card mb-2">
+                        <h3 class="card-title text-center">How are you feeling right now?</h3>
+
+                        <form id="moodForm">
+                            <div class="mood-selector" id="moodSelector">
+                                <div class="mood-option" data-value="1" title="Very Bad">😫</div>
+                                <div class="mood-option" data-value="3" title="Bad">😞</div>
+                                <div class="mood-option" data-value="5" title="Neutral">😐</div>
+                                <div class="mood-option" data-value="7" title="Good">🙂</div>
+                                <div class="mood-option" data-value="9" title="Excellent">🤩</div>
+                                <div class="mood-option" data-value="10" title="Amazing">🚀</div>
+                            </div>
+                            <input type="hidden" name="mood_score" id="moodInput" required>
+
+                            <div class="energy-slider-container">
+                                <label class="form-label mb-1">Energy Level</label>
+                                <div class="energy-value" id="energyValue">5</div>
+                                <input type="range" class="form-control" name="energy_level" min="1" max="10" value="5"
+                                    id="energySlider">
+                                <div
+                                    style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 5px;">
+                                    <span>Exhausted</span>
+                                    <span>Energized</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Notes (Optional)</label>
+                                <textarea class="form-control" name="notes" rows="3"
+                                    placeholder="What's influencing your mood?"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full btn-lg">
+                                Log Check-in
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Recent History -->
+                    <div class="glass-card">
+                        <h3 class="card-title">Recent Logs</h3>
+                        <div class="history-list" id="moodHistoryList">
+                            <div class="spinner" style="margin: 0 auto;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Sidebar -->
+                <div class="grid" style="gap: var(--spacing-lg); align-content: start;">
+                    <div class="glass-card">
+                        <h3 class="card-title">Weekly Average</h3>
+                        <div style="display: flex; justify-content: space-around; margin-top: var(--spacing-lg);">
+                            <div class="text-center">
+                                <div style="font-size: 2rem;" id="avgMood">-</div>
+                                <div style="font-size: 0.8rem; color: var(--color-text-secondary);">Mood</div>
+                            </div>
+                            <div class="text-center">
+                                <div style="font-size: 2rem;" id="avgEnergy">-</div>
+                                <div style="font-size: 0.8rem; color: var(--color-text-secondary);">Energy</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3 class="card-title mb-1">Insights</h3>
+                        <p style="font-size: 0.9rem; line-height: 1.5; color: var(--color-text-secondary);">
+                            Your energy tends to peak in the <strong
+                                style="color: var(--color-primary-light);">morning</strong>.
+                            Schedule your most demanding tasks before noon for 20% better efficiency.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/mood.js"></script>
+</body>
+
+</html>

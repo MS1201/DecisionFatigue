@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Decision Fatigue Management Dashboard - Your daily command center">
+    <title>Dashboard - Decision Fatigue App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>🧠 Decision Fatigue</h2>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/dashboard.html" class="nav-link active">
+                            <span class="nav-icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/schedule.html" class="nav-link">
+                            <span class="nav-icon">📅</span>
+                            <span>Schedule</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/meals.html" class="nav-link">
+                            <span class="nav-icon">🍽️</span>
+                            <span>Meals</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/outfits.html" class="nav-link">
+                            <span class="nav-icon">👔</span>
+                            <span>Outfits</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/tasks.html" class="nav-link">
+                            <span class="nav-icon">✅</span>
+                            <span>Tasks</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/autopilot.html" class="nav-link">
+                            <span class="nav-icon">🤖</span>
+                            <span>Autopilot</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/mood.html" class="nav-link">
+                            <span class="nav-icon">😊</span>
+                            <span>Mood Tracker</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/analytics.html" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <header class="dashboard-header">
+            <div class="header-title">
+                <h1>Good <span id="greeting"></span>, <span id="userName"></span>!</h1>
+                <p class="header-subtitle" id="dateDisplay"></p>
+            </div>
+            <div class="header-actions">
+                <div class="user-menu" onclick="logout()">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <span id="userNameMenu"></span>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="decisionsAutomated">0</div>
+                    <div class="stat-label">Decisions Automated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tasksCompleted">0</div>
+                    <div class="stat-label">Tasks Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="productivityScore">0%</div>
+                    <div class="stat-label">Productivity Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="energyLevel">-</div>
+                    <div class="stat-label">Today's Energy</div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Top Priority Tasks -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">🎯</span>
+                            Top 3 Priorities
+                        </h3>
+                        <a href="/tasks.html" class="btn btn-sm btn-outline">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <ul class="task-list" id="priorityTasks">
+                            <li style="text-align: center; color: var(--color-text-muted); padding: var(--spacing-xl);">
+                                Loading tasks...
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Today's Schedule Preview -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">📅</span>
+                            Today's Schedule
+                        </h3>
+                        <a href="/schedule.html" class="btn btn-sm btn-outline">Full Day</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline" id="schedulePreview">
+                            <p style="text-align: center; color: var(--color-text-muted); padding: var(--spacing-xl);">
+                                Loading schedule...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meal Suggestions -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">🍽️</span>
+                            Today's Meals
+                        </h3>
+                        <a href="/meals.html" class="btn btn-sm btn-outline">Plan Meals</a>
+                    </div>
+                    <div class="card-body" id="mealSuggestions">
+                        <p style="text-align: center; color: var(--color-text-muted); padding: var(--spacing-xl);">
+                            Loading meal plan...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Outfit Suggestion -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">👔</span>
+                            Today's Outfit
+                        </h3>
+                        <a href="/outfits.html" class="btn btn-sm btn-outline">Wardrobe</a>
+                    </div>
+                    <div class="card-body" id="outfitSuggestion">
+                        <p style="text-align: center; color: var(--color-text-muted); padding: var(--spacing-xl);">
+                            Loading outfit...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="glass-card" style="margin-top: var(--spacing-xl);">
+                <h3 style="margin-bottom: var(--spacing-lg);">⚡ Quick Actions</h3>
+                <div class="grid grid-4">
+                    <button class="btn btn-primary" onclick="window.location.href='/autopilot.html'">
+                        🤖 Enable Autopilot
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.href='/tasks.html'">
+                        ✅ Add Task
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.href='/mood.html'">
+                        😊 Log Mood
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.href='/analytics.html'">
+                        📈 View Analytics
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <script src="/js/api.js"></script>
+    <script>
+        // Check authentication
+        if (!isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+
+        const user = getUser();
+        const today = getTodayDate();
+
+        // Set greeting based on time
+        function setGreeting() {
+            const hour = new Date().getHours();
+            let greeting = 'morning';
+            if (hour >= 12 && hour < 17) greeting = 'afternoon';
+            else if (hour >= 17) greeting = 'evening';
+            document.getElementById('greeting').textContent = greeting;
+        }
+
+        // Initialize dashboard
+        async function initDashboard() {
+            // Set user info
+            if (user) {
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('userName').textContent = user.full_name.split(' ')[0];
+                document.getElementById('userNameMenu').textContent = user.full_name;
+                document.getElementById('userAvatar').textContent = initials;
+            }
+
+            // Set date
+            document.getElementById('dateDisplay').textContent = formatDate(today);
+            setGreeting();
+
+            // Load data
+            await Promise.all([
+                loadTopPriorities(),
+                loadSchedulePreview(),
+                loadMealPlan(),
+                loadOutfit(),
+                loadStats()
+            ]);
+        }
+
+        async function loadTopPriorities() {
+            try {
+                const tasks = await API.getTopPriorities();
+                const container = document.getElementById('priorityTasks');
+
+                if (tasks.length === 0) {
+                    container.innerHTML = '<li style="text-align: center; color: var(--color-text-muted); padding: var(--spacing-lg);">No tasks yet. Add some!</li>';
+                    return;
+                }
+
+                container.innerHTML = tasks.map(task => `
+                    <li class="task-item">
+                        <strong>${task.title}</strong>
+                        <span class="badge badge-${task.eisenhower_quadrant === 'Q1' ? 'error' : 'warning'}" style="margin-left: var(--spacing-sm);">
+                            ${task.eisenhower_quadrant}
+                        </span>
+                    </li>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load tasks:', error);
+            }
+        }
+
+        async function loadSchedulePreview() {
+            try {
+                const schedule = await API.getSchedule(today);
+                const container = document.getElementById('schedulePreview');
+
+                if (!schedule || !schedule.schedule_data) {
+                    container.innerHTML = `
+                        <p style="text-align: center; color: var(--color-text-secondary);">
+                            No schedule for today. 
+                            <a href="/schedule.html" style="color: var(--color-primary-light);">Generate one now</a>
+                        </p>
+                    `;
+                    return;
+                }
+
+                const items = schedule.schedule_data.slice(0, 5); // Show first 5 items
+                container.innerHTML = items.map(item => `
+                    <div class="timeline-item">
+                        <div class="timeline-time">${item.time}</div>
+                        <div class="timeline-content">
+                            ${item.activity}
+                            <span class="badge badge-${item.energy_level === 'high' ? 'success' : 'primary'}" style="margin-left: var(--spacing-sm); font-size: 0.7rem;">
+                                ${item.energy_level}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load schedule:', error);
+            }
+        }
+
+        async function loadMealPlan() {
+            try {
+                const meals = await API.getMeals(today);
+                const container = document.getElementById('mealSuggestions');
+
+                if (meals.length === 0) {
+                    container.innerHTML = `
+                        <p style="text-align: center; color: var(--color-text-secondary);">
+                            No meal plan yet. 
+                            <a href="/meals.html" style="color: var(--color-primary-light);">Plan your meals</a>
+                        </p>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = meals.map(meal => `
+                    <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-surface); border-radius: var(--radius-md);">
+                        <strong style="text-transform: capitalize;">${meal.meal_type}:</strong>
+                        <span style="color: var(--color-text-secondary); margin-left: var(--spacing-sm);">${meal.meal_name}</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load meals:', error);
+            }
+        }
+
+        async function loadOutfit() {
+            try {
+                const outfit = await API.getOutfit(today);
+                const container = document.getElementById('outfitSuggestion');
+
+                if (!outfit || !outfit.outfit_data) {
+                    container.innerHTML = `
+                        <p style="text-align: center; color: var(--color-text-secondary);">
+                            No outfit selected yet. 
+                            <a href="/outfits.html" style="color: var(--color-primary-light);">Get suggestions</a>
+                        </p>
+                    `;
+                    return;
+                }
+
+                const data = outfit.outfit_data;
+                container.innerHTML = `
+                    <div style="text-align: center;">
+                        <p style="margin-bottom: var(--spacing-sm);"><strong>Occasion:</strong> ${data.occasion || 'Casual'}</p>
+                        ${data.top ? `<p>👕 ${data.top.color} ${data.top.item_type}</p>` : ''}
+                        ${data.bottom ? `<p>👖 ${data.bottom.color} ${data.bottom.item_type}</p>` : ''}
+                        ${data.shoes ? `<p>👞 ${data.shoes.color} ${data.shoes.item_type}</p>` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Failed to load outfit:', error);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const analytics = await API.getAnalytics(7);
+
+                if (analytics.decisionStats) {
+                    document.getElementById('decisionsAutomated').textContent =
+                        analytics.decisionStats.total_decisions_automated || 0;
+                    document.getElementById('tasksCompleted').textContent =
+                        analytics.decisionStats.total_tasks_completed || 0;
+                    document.getElementById('energyLevel').textContent =
+                        analytics.decisionStats.avg_energy
+                            ? (analytics.decisionStats.avg_energy.toFixed(1) + '/10')
+                            : '-';
+                }
+
+                if (analytics.productivityScore !== undefined) {
+                    document.getElementById('productivityScore').textContent =
+                        analytics.productivityScore + '%';
+                }
+            } catch (error) {
+                console.error('Failed to load analytics:', error);
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Initialize on page load
+        initDashboard();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outfit Generator - Decision Fatigue App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .wardrobe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .wardrobe-item {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            transition: transform var(--transition-fast);
+        }
+
+        .wardrobe-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-primary);
+        }
+
+        .item-image {
+            height: 150px;
+            background: var(--color-surface-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            padding: var(--spacing-sm);
+        }
+
+        .item-type {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+        }
+
+        .item-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .wardrobe-item:hover .item-delete {
+            opacity: 1;
+        }
+
+        .outfit-display {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .outfit-piece {
+            text-align: center;
+            width: 120px;
+        }
+
+        .piece-placeholder {
+            width: 100px;
+            height: 100px;
+            background: var(--color-surface-elevated);
+            border-radius: var(--radius-md);
+            margin: 0 auto var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 1px dashed var(--color-border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>🧠 Decision Fatigue</h2>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/dashboard.html" class="nav-link"><span
+                                class="nav-icon">📊</span><span>Dashboard</span></a></li>
+                    <li class="nav-item"><a href="/schedule.html" class="nav-link"><span
+                                class="nav-icon">📅</span><span>Schedule</span></a></li>
+                    <li class="nav-item"><a href="/meals.html" class="nav-link"><span
+                                class="nav-icon">🍽️</span><span>Meals</span></a></li>
+                    <li class="nav-item"><a href="/outfits.html" class="nav-link active"><span
+                                class="nav-icon">👔</span><span>Outfits</span></a></li>
+                    <li class="nav-item"><a href="/tasks.html" class="nav-link"><span
+                                class="nav-icon">✅</span><span>Tasks</span></a></li>
+                    <li class="nav-item"><a href="/autopilot.html" class="nav-link"><span
+                                class="nav-icon">🤖</span><span>Autopilot</span></a></li>
+                    <li class="nav-item"><a href="/mood.html" class="nav-link"><span
+                                class="nav-icon">😊</span><span>Mood Tracker</span></a></li>
+                    <li class="nav-item"><a href="/analytics.html" class="nav-link"><span
+                                class="nav-icon">📈</span><span>Analytics</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <header class="dashboard-header">
+            <div class="header-title">
+                <h1>Outfit Generator</h1>
+                <p class="header-subtitle" id="currentDateDisplay"></p>
+            </div>
+            <div class="user-menu" onclick="logout()">
+                <div class="user-avatar" id="userAvatar">U</div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="grid grid-2" style="grid-template-columns: 2fr 1fr; gap: var(--spacing-xl);">
+                <div>
+                    <div class="glass-card mb-2">
+                        <div class="card-header">
+                            <h3 class="card-title">Today's Look</h3>
+                            <div style="display: flex; gap: var(--spacing-sm);">
+                                <select class="form-control" id="occasionSelect"
+                                    style="padding: 4px 8px; font-size: 0.8rem;">
+                                    <option value="casual">Casual</option>
+                                    <option value="business">Business</option>
+                                    <option value="formal">Formal</option>
+                                    <option value="sport">Sport</option>
+                                </select>
+                                <button class="btn btn-primary btn-sm" id="generateOutfitBtn">
+                                    ✨ Suggest Outfit
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="outfitContainer"
+                            style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <p style="color: var(--color-text-muted);">Select occasion and click generate</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3 class="card-title">My Digital Closet</h3>
+                            <button class="btn btn-sm btn-outline"
+                                onclick="document.getElementById('addItemModal').style.display='flex'">
+                                + Add Item
+                            </button>
+                        </div>
+
+                        <div class="wardrobe-grid" id="wardrobeGrid">
+                            <div class="spinner" style="margin: 0 auto;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid" style="gap: var(--spacing-lg); align-content: start;">
+                    <div class="glass-card">
+                        <h3 class="card-title mb-1">Weather Forecast</h3>
+                        <div style="text-align: center; padding: var(--spacing-lg);">
+                            <div style="font-size: 3rem;">☀️</div>
+                            <div style="font-size: 2rem; font-weight: 700;">72°F</div>
+                            <p style="color: var(--color-text-secondary);">Sunny & Clear</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <div id="addItemModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: var(--z-modal); justify-content: center; align-items: center;">
+        <div class="glass-card" style="width: 100%; max-width: 400px; background: var(--color-surface);">
+            <h3 class="mb-2">Add to Wardrobe</h3>
+            <form id="addItemForm">
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-control" name="item_type" required>
+                        <option value="top">Top</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="shoes">Shoes</option>
+                        <option value="accessory">Accessory</option>
+                        <option value="outerwear">Outerwear</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Color</label>
+                    <input type="text" class="form-control" name="color" placeholder="e.g. Blue, Black" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Occasion</label>
+                    <select class="form-control" name="occasion" required>
+                        <option value="casual">Casual</option>
+                        <option value="business">Business</option>
+                        <option value="formal">Formal</option>
+                        <option value="sport">Sport</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Style</label>
+                    <input type="text" class="form-control" name="style" placeholder="e.g. Kurta, Jeans, Silk Saree">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="url" class="form-control" name="image_url" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Season</label>
+                    <select class="form-control" name="season" required>
+                        <option value="all">All Year</option>
+                        <option value="summer">Summer</option>
+                        <option value="winter">Winter</option>
+                        <option value="spring">Spring/Fall</option>
+                    </select>
+                </div>
+                <div
+                    style="display: flex; gap: var(--spacing-md); justify-content: flex-end; margin-top: var(--spacing-lg);">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="document.getElementById('addItemModal').style.display='none'">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/outfits.js"></script>
+</body>
+
+</html>

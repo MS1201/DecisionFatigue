@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Autopilot - Decision Fatigue App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .autopilot-switch {
+            position: relative;
+            display: inline-block;
+            width: 80px;
+            height: 40px;
+            margin: var(--spacing-lg) 0;
+        }
+
+        .autopilot-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--color-surface-elevated);
+            transition: .4s;
+            border-radius: 40px;
+            border: 2px solid var(--color-border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "🤖";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            height: 32px;
+            width: 32px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(40px);
+        }
+
+        .automation-level {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--spacing-lg);
+            position: relative;
+        }
+
+        .automation-level::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--color-border);
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .level-point {
+            width: 20px;
+            height: 20px;
+            background: var(--color-surface);
+            border: 2px solid var(--color-text-muted);
+            border-radius: 50%;
+            z-index: 1;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .level-point.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>🧠 Decision Fatigue</h2>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/dashboard.html" class="nav-link"><span
+                                class="nav-icon">📊</span><span>Dashboard</span></a></li>
+                    <li class="nav-item"><a href="/schedule.html" class="nav-link"><span
+                                class="nav-icon">📅</span><span>Schedule</span></a></li>
+                    <li class="nav-item"><a href="/meals.html" class="nav-link"><span
+                                class="nav-icon">🍽️</span><span>Meals</span></a></li>
+                    <li class="nav-item"><a href="/outfits.html" class="nav-link"><span
+                                class="nav-icon">👔</span><span>Outfits</span></a></li>
+                    <li class="nav-item"><a href="/tasks.html" class="nav-link"><span
+                                class="nav-icon">✅</span><span>Tasks</span></a></li>
+                    <li class="nav-item"><a href="/autopilot.html" class="nav-link active"><span
+                                class="nav-icon">🤖</span><span>Autopilot</span></a></li>
+                    <li class="nav-item"><a href="/mood.html" class="nav-link"><span
+                                class="nav-icon">😊</span><span>Mood Tracker</span></a></li>
+                    <li class="nav-item"><a href="/analytics.html" class="nav-link"><span
+                                class="nav-icon">📈</span><span>Analytics</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <header class="dashboard-header">
+            <div class="header-title">
+                <h1>Decision Automation Mode</h1>
+                <p class="header-subtitle">Let AI take the wheel for today</p>
+            </div>
+            <div class="user-menu" onclick="logout()">
+                <div class="user-avatar" id="userAvatar">U</div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="container" style="max-width: 800px;">
+                <div class="glass-card text-center" style="margin-bottom: var(--spacing-2xl);">
+                    <h3 class="card-title" style="justify-content: center;">Autopilot Status</h3>
+
+                    <label class="autopilot-switch">
+                        <input type="checkbox" id="autopilotToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <p id="statusText" style="color: var(--color-text-secondary);">Autopilot is OFF</p>
+
+                    <div style="margin-top: var(--spacing-xl); text-align: left; padding: 0 var(--spacing-xl);">
+                        <label class="form-label">Automation Level</label>
+                        <div class="automation-level">
+                            <div class="level-point" onclick="setLevel(1)" title="Schedule Only"></div>
+                            <div class="level-point active" onclick="setLevel(2)" title="Schedule + Meals"></div>
+                            <div class="level-point" onclick="setLevel(3)" title="Full Automation"></div>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-top: var(--spacing-sm); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                            <span>Basic</span>
+                            <span>Standard</span>
+                            <span>Full AI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="autopilotActions" class="glass-card"
+                    style="display: none; opacity: 0; transition: opacity 0.5s;">
+                    <h3 class="card-title mb-2">Generated Daily Plan</h3>
+
+                    <div class="task-item mb-1">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                            <span>📅</span>
+                            <div>
+                                <strong>Schedule Generated</strong>
+                                <div style="font-size: 0.8rem; color: var(--color-success);">Optimized for Morning Peak
+                                </div>
+                            </div>
+                        </div>
+                        <span class="badge badge-success">Done</span>
+                    </div>
+
+                    <div class="task-item mb-1">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                            <span>🍽️</span>
+                            <div>
+                                <strong>Meals Planned</strong>
+                                <div style="font-size: 0.8rem;">Breakfast, Lunch, Dinner Set</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-success">Done</span>
+                    </div>
+
+                    <div class="task-item mb-1">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                            <span>👔</span>
+                            <div>
+                                <strong>Outfit Selected</strong>
+                                <div style="font-size: 0.8rem;">Casual Friday Look</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-success">Done</span>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
+                            You've saved approximately <strong>15 minutes</strong> of decision making time!
+                        </p>
+                        <a href="/dashboard.html" class="btn btn-primary">View Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <script src="/js/api.js"></script>
+    <script>
+        if (!isAuthenticated()) window.location.href = '/login.html';
+
+        const user = getUser();
+        if (user) document.getElementById('userAvatar').textContent = user.full_name.charAt(0).toUpperCase();
+
+        const toggle = document.getElementById('autopilotToggle');
+        const statusText = document.getElementById('statusText');
+        const actions = document.getElementById('autopilotActions');
+        const points = document.querySelectorAll('.level-point');
+
+        toggle.addEventListener('change', async function () {
+            if (this.checked) {
+                statusText.textContent = 'Autopilot is ON';
+                statusText.style.color = 'var(--color-primary-light)';
+
+                actions.style.display = 'block';
+                setTimeout(() => actions.style.opacity = '1', 100);
+
+                try {
+                    const today = getTodayDate();
+                    await API.generateSchedule(today, { autopilot: 1 });
+                    await API.suggestOutfit(today, 'casual', { temp: 72 }, 1);
+                } catch (e) { console.log(e); }
+
+            } else {
+                statusText.textContent = 'Autopilot is OFF';
+                statusText.style.color = 'var(--color-text-secondary)';
+                actions.style.opacity = '0';
+                setTimeout(() => actions.style.display = 'none', 500);
+            }
+        });
+
+        window.setLevel = (level) => {
+            points.forEach((p, i) => {
+                if (i < level) p.classList.add('active');
+                else p.classList.remove('active');
+            });
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Assistant - Decision Fatigue App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .meal-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: transform var(--transition-fast);
+        }
+
+        .meal-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-primary);
+        }
+
+        .meal-header {
+            background: var(--color-surface-elevated);
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .meal-type {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: var(--font-size-xs);
+            letter-spacing: 1px;
+            color: var(--color-text-secondary);
+        }
+
+        .meal-body {
+            padding: var(--spacing-lg);
+        }
+
+        .meal-name {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .meal-meta {
+            display: flex;
+            gap: var(--spacing-md);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .ingredient-list {
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .ingredient-tag {
+            display: inline-block;
+            background: hsla(260, 25%, 25%, 0.5);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: var(--font-size-xs);
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .grocery-list {
+            list-style: none;
+        }
+
+        .grocery-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar (Same as dashboard) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>🧠 Decision Fatigue</h2>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/dashboard.html" class="nav-link"><span
+                                class="nav-icon">📊</span><span>Dashboard</span></a></li>
+                    <li class="nav-item"><a href="/schedule.html" class="nav-link"><span
+                                class="nav-icon">📅</span><span>Schedule</span></a></li>
+                    <li class="nav-item"><a href="/meals.html" class="nav-link active"><span
+                                class="nav-icon">🍽️</span><span>Meals</span></a></li>
+                    <li class="nav-item"><a href="/outfits.html" class="nav-link"><span
+                                class="nav-icon">👔</span><span>Outfits</span></a></li>
+                    <li class="nav-item"><a href="/tasks.html" class="nav-link"><span
+                                class="nav-icon">✅</span><span>Tasks</span></a></li>
+                    <li class="nav-item"><a href="/autopilot.html" class="nav-link"><span
+                                class="nav-icon">🤖</span><span>Autopilot</span></a></li>
+                    <li class="nav-item"><a href="/mood.html" class="nav-link"><span
+                                class="nav-icon">😊</span><span>Mood Tracker</span></a></li>
+                    <li class="nav-item"><a href="/analytics.html" class="nav-link"><span
+                                class="nav-icon">📈</span><span>Analytics</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-title">
+                <h1>Meal Decision Assistant</h1>
+                <p class="header-subtitle" id="currentDateDisplay"></p>
+            </div>
+            <div class="user-menu" onclick="logout()">
+                <div class="user-avatar" id="userAvatar">U</div>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div class="grid grid-2" style="grid-template-columns: 2fr 1fr; gap: var(--spacing-xl);">
+                <div>
+                    <div class="glass-card mb-2">
+                        <div class="card-header">
+                            <h3 class="card-title">Today's Menu</h3>
+                            <button class="btn btn-primary btn-sm" id="generateAllMealsBtn">
+                                🎲 Randomize All
+                            </button>
+                        </div>
+                        <div class="grid" style="gap: var(--spacing-lg);" id="mealsContainer">
+                            <div class="spinner" style="margin: 0 auto;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid" style="gap: var(--spacing-lg); align-content: start;">
+                    <div class="glass-card">
+                        <h3 class="card-title mb-1">Dietary Preferences</h3>
+                        <form id="dietForm">
+                            <div class="form-group">
+                                <label class="form-label">Diet Type</label>
+                                <select class="form-control" id="dietType">
+                                    <option value="balanced">Balanced</option>
+                                    <option value="veg">Vegetarian</option>
+                                    <option value="vegan">Vegan</option>
+                                    <option value="keto">Keto</option>
+                                    <option value="paleo">Paleo</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Daily Calories</label>
+                                <input type="number" class="form-control" id="calories" value="2000">
+                            </div>
+                            <button type="submit" class="btn btn-secondary btn-full">
+                                Update Diet
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Grocery List</h3>
+                            <button class="btn btn-outline btn-sm" id="refreshGroceryBtn">🔄</button>
+                        </div>
+                        <div id="groceryListContainer">
+                            <p
+                                style="color: var(--color-text-secondary); text-align: center; font-size: var(--font-size-sm);">
+                                Generate meals to see grocery list
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/meals.js"></script>
+</body>
+
+</html>

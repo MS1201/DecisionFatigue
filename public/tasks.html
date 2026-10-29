@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Prioritization - Decision Fatigue App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .eisenhower-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: var(--spacing-lg);
+            height: 500px;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .quadrant {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .quadrant-header {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .q1 {
+            border-top: 4px solid var(--color-error);
+        }
+
+        .q2 {
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .q3 {
+            border-top: 4px solid var(--color-warning);
+        }
+
+        .q4 {
+            border-top: 4px solid var(--color-text-muted);
+        }
+
+        .matrix-task {
+            background: var(--color-surface-elevated);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: transform var(--transition-fast);
+        }
+
+        .matrix-task:hover {
+            transform: scale(1.02);
+        }
+
+        .range-wrap {
+            position: relative;
+            margin: var(--spacing-lg) 0;
+        }
+
+        .range-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>🧠 Decision Fatigue</h2>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/dashboard.html" class="nav-link"><span
+                                class="nav-icon">📊</span><span>Dashboard</span></a></li>
+                    <li class="nav-item"><a href="/schedule.html" class="nav-link"><span
+                                class="nav-icon">📅</span><span>Schedule</span></a></li>
+                    <li class="nav-item"><a href="/meals.html" class="nav-link"><span
+                                class="nav-icon">🍽️</span><span>Meals</span></a></li>
+                    <li class="nav-item"><a href="/outfits.html" class="nav-link"><span
+                                class="nav-icon">👔</span><span>Outfits</span></a></li>
+                    <li class="nav-item"><a href="/tasks.html" class="nav-link active"><span
+                                class="nav-icon">✅</span><span>Tasks</span></a></li>
+                    <li class="nav-item"><a href="/autopilot.html" class="nav-link"><span
+                                class="nav-icon">🤖</span><span>Autopilot</span></a></li>
+                    <li class="nav-item"><a href="/mood.html" class="nav-link"><span
+                                class="nav-icon">😊</span><span>Mood Tracker</span></a></li>
+                    <li class="nav-item"><a href="/analytics.html" class="nav-link"><span
+                                class="nav-icon">📈</span><span>Analytics</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-title">
+                <h1>Task Prioritization</h1>
+                <p class="header-subtitle">Eisenhower Matrix & AI Sorting</p>
+            </div>
+            <div class="user-menu" onclick="logout()">
+                <div class="user-avatar" id="userAvatar">U</div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="grid grid-2" style="grid-template-columns: 2fr 1fr; gap: var(--spacing-xl);">
+                <!-- Matrix View -->
+                <div>
+                    <div class="glass-card mb-2">
+                        <div class="card-header">
+                            <h3 class="card-title">Eisenhower Matrix</h3>
+                            <button class="btn btn-sm btn-outline" onclick="loadTasks()">🔄 Refresh</button>
+                        </div>
+
+                        <div class="eisenhower-matrix">
+                            <div class="quadrant q1" id="q1-list">
+                                <div class="quadrant-header">
+                                    <span>Do First (Urgent & Important)</span>
+                                    <span class="badge badge-error">Q1</span>
+                                </div>
+                                <!-- Tasks go here -->
+                            </div>
+                            <div class="quadrant q2" id="q2-list">
+                                <div class="quadrant-header">
+                                    <span>Schedule (Not Urgent, Important)</span>
+                                    <span class="badge badge-primary">Q2</span>
+                                </div>
+                            </div>
+                            <div class="quadrant q3" id="q3-list">
+                                <div class="quadrant-header">
+                                    <span>Delegate (Urgent, Not Important)</span>
+                                    <span class="badge badge-warning">Q3</span>
+                                </div>
+                            </div>
+                            <div class="quadrant q4" id="q4-list">
+                                <div class="quadrant-header">
+                                    <span>Eliminate (Not Urgent, Not Important)</span>
+                                    <span class="badge badge-secondary">Q4</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Task Form -->
+                <div class="grid" style="gap: var(--spacing-lg); align-content: start;">
+                    <div class="glass-card">
+                        <h3 class="card-title mb-1">Add New Task</h3>
+                        <form id="addTaskForm">
+                            <div class="form-group">
+                                <label class="form-label">Task Title</label>
+                                <input type="text" class="form-control" name="title" required
+                                    placeholder="What needs to be done?">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Urgency (1-10)</label>
+                                <div class="range-wrap">
+                                    <div class="range-label">
+                                        <span>Can Wait</span>
+                                        <span>Need it NOW</span>
+                                    </div>
+                                    <input type="range" class="form-control" name="urgency" min="1" max="10" value="5"
+                                        style="padding: 0;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Importance (1-10)</label>
+                                <div class="range-wrap">
+                                    <div class="range-label">
+                                        <span>Trivial</span>
+                                        <span>Critical</span>
+                                    </div>
+                                    <input type="range" class="form-control" name="importance" min="1" max="10"
+                                        value="5" style="padding: 0;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Deadline</label>
+                                <input type="date" class="form-control" name="deadline">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                Add & Prioritize
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3 class="card-title mb-1">Top Priorities</h3>
+                        <ul class="task-list" id="topPriorityList">
+                            <!-- List items -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/tasks.js"></script>
+</body>
+
+</html>

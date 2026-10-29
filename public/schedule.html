@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Schedule - Decision Fatigue App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: var(--spacing-xl);
+        }
+
+        @media (max-width: 992px) {
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .time-slot {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--color-border);
+            transition: background var(--transition-fast);
+        }
+
+        .time-slot:hover {
+            background: var(--color-surface-elevated);
+        }
+
+        .time-col {
+            min-width: 80px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .activity-col {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .activity-details {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .energy-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            margin-left: var(--spacing-sm);
+        }
+
+        .energy-high {
+            background: hsla(140, 70%, 55%, 0.2);
+            color: var(--color-success);
+        }
+
+        .energy-medium {
+            background: hsla(200, 80%, 55%, 0.2);
+            color: var(--color-info);
+        }
+
+        .energy-low {
+            background: hsla(45, 95%, 60%, 0.2);
+            color: var(--color-warning);
+        }
+
+        .energy-rest {
+            background: hsla(260, 70%, 60%, 0.2);
+            color: var(--color-primary-light);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar (Same as dashboard) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h2>🧠 Decision Fatigue</h2>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/dashboard.html" class="nav-link"><span
+                                class="nav-icon">📊</span><span>Dashboard</span></a></li>
+                    <li class="nav-item"><a href="/schedule.html" class="nav-link active"><span
+                                class="nav-icon">📅</span><span>Schedule</span></a></li>
+                    <li class="nav-item"><a href="/meals.html" class="nav-link"><span
+                                class="nav-icon">🍽️</span><span>Meals</span></a></li>
+                    <li class="nav-item"><a href="/outfits.html" class="nav-link"><span
+                                class="nav-icon">👔</span><span>Outfits</span></a></li>
+                    <li class="nav-item"><a href="/tasks.html" class="nav-link"><span
+                                class="nav-icon">✅</span><span>Tasks</span></a></li>
+                    <li class="nav-item"><a href="/autopilot.html" class="nav-link"><span
+                                class="nav-icon">🤖</span><span>Autopilot</span></a></li>
+                    <li class="nav-item"><a href="/mood.html" class="nav-link"><span
+                                class="nav-icon">😊</span><span>Mood Tracker</span></a></li>
+                    <li class="nav-item"><a href="/analytics.html" class="nav-link"><span
+                                class="nav-icon">📈</span><span>Analytics</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-title">
+                <h1>Smart Schedule Planner</h1>
+                <p class="header-subtitle" id="currentDateDisplay"></p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="prevDayBtn">←</button>
+                <button class="btn btn-secondary" id="nextDayBtn">→</button>
+                <div class="user-menu" onclick="logout()">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="schedule-grid">
+                <!-- Main Schedule View -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Daily Timeline</h3>
+                        <div style="display: flex; gap: var(--spacing-sm);">
+                            <button class="btn btn-primary btn-sm" id="generateBtn">
+                                ✨ Generate New Schedule
+                            </button>
+                        </div>
+                    </div>
+                    <div id="scheduleContainer">
+                        <!-- Schedule items will be injected here -->
+                        <div style="text-align: center; padding: var(--spacing-3xl);">
+                            <div class="spinner" style="margin: 0 auto;"></div>
+                            <p class="mt-1">Loading schedule...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings & Info -->
+                <div class="grid grid-1" style="gap: var(--spacing-lg); align-content: start;">
+                    <div class="glass-card">
+                        <h3 class="card-title mb-1">Schedule Settings</h3>
+                        <form id="scheduleSettingsForm">
+                            <div class="form-group">
+                                <label class="form-label">Work Hours</label>
+                                <div style="display: flex; gap: var(--spacing-sm);">
+                                    <input type="time" class="form-control" id="workStart" value="09:00">
+                                    <span style="align-self: center;">to</span>
+                                    <input type="time" class="form-control" id="workEnd" value="17:00">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Peak Energy Time</label>
+                                <select class="form-control" id="energyPeak">
+                                    <option value="morning">Morning (Bird)</option>
+                                    <option value="afternoon">Afternoon</option>
+                                    <option value="evening">Evening (Owl)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-secondary btn-full">
+                                Update Preferences
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3 class="card-title mb-1">Energy Analysis</h3>
+                        <div id="energyChart">
+                            <!-- Simple visual representation of energy throughout the day -->
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: flex-end; height: 100px; padding-top: var(--spacing-md);">
+                                <div style="width: 20%; background: var(--color-success); height: 80%; border-radius: 4px;"
+                                    title="Morning"></div>
+                                <div style="width: 20%; background: var(--color-warning); height: 40%; border-radius: 4px;"
+                                    title="Mid-day"></div>
+                                <div style="width: 20%; background: var(--color-info); height: 60%; border-radius: 4px;"
+                                    title="Afternoon"></div>
+                                <div style="width: 20%; background: var(--color-primary); height: 30%; border-radius: 4px;"
+                                    title="Evening"></div>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--color-text-secondary); margin-top: 5px;">
+                                <span>9 AM</span>
+                                <span>1 PM</span>
+                                <span>5 PM</span>
+                                <span>9 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/schedule.js"></script>
+</body>
+
+</html>
