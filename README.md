@@ -1,5 +1,7 @@
 # Decision Fatigue Management App
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/MS1201/DecisionFatigue)
+
 A comprehensive web application to help users reduce daily mental overload through intelligent automation and planning.
 
 ## 🌟 Features
